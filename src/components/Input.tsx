@@ -2,7 +2,7 @@ import { Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import { getOwnerAndRepo } from "../utils/helpers";
 import { useDispatch } from "react-redux";
-import { fetchRepo } from "../store/thunks";
+import { fetchIssues, fetchRepo } from "../store/thunks";
 import { UnknownAction } from "@reduxjs/toolkit";
 
 export const Input = () => {
@@ -19,6 +19,10 @@ export const Input = () => {
     }
     dispatch(
       fetchRepo(getOwnerAndRepo(inputValue)) as unknown as UnknownAction
+    );
+
+    dispatch(
+      fetchIssues(getOwnerAndRepo(inputValue)) as unknown as UnknownAction
     );
   };
 

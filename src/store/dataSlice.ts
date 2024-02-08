@@ -1,11 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchRepo } from "./thunks";
+import { fetchIssues, fetchRepo } from "./thunks";
 import { initialState } from "../utils/constants";
 
 export const dataSlice = createSlice({
   name: "data",
   initialState,
-  reducers: {},
+  reducers: {
+    updateIssues: (state, action) => {
+      state.issues = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchRepo.pending, (state) => {
@@ -18,8 +22,22 @@ export const dataSlice = createSlice({
       .addCase(fetchRepo.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || "";
+      })
+      .addCase(fetchIssues.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchIssues.fulfilled, (state, { payload }) => {
+        state.loading = false;
+        state.issues = payload;
+        console.log(payload);
+      })
+      .addCase(fetchIssues.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "";
       });
   },
 });
+
+export const { updateIssues } = dataSlice.actions;
 
 export default dataSlice.reducer;
