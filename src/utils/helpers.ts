@@ -1,3 +1,6 @@
+import axios from "axios";
+import { Issue } from "./types";
+
 export const ucString = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
@@ -14,7 +17,7 @@ export const preparedDate = (createdDate: string) => {
   const currentDate = new Date();
 
   if (date > currentDate) {
-    return "Дата в будущем";
+    return "Date is in the future!";
   }
 
   const differenceMilliseconds = currentDate.getTime() - date.getTime();
@@ -25,3 +28,24 @@ export const preparedDate = (createdDate: string) => {
 
   return differenceDays;
 };
+
+export const fetchApiData = async (url: string) => {
+  try {
+    const response = await axios.get(url);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const filterAndMapIssues = (payload: Issue[], state: string) =>
+  payload
+    .filter((item) => item.state === state)
+    .map((item) => ({
+      title: item.title,
+      state: item.state,
+      number: item.number,
+      created_at: item.created_at,
+      user: item.user,
+      comments: item.comments,
+    }));

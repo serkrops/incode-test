@@ -9,24 +9,30 @@ export const InfoLine = () => {
     (state: RootState) => state.data.repo
   );
 
+  if (!name) {
+    return null;
+  }
+
   return (
-    <>
-      {name && (
-        <Container className="d-flex gap-3 p-0">
-          <a href={html_url} target="_blank" style={{ textDecoration: "none" }}>
-            <h3>{ucString(owner.login) + " > " + ucString(name)}</h3>
-          </a>
-          <div className="d-flex justify-content-center align-items-center gap-2">
-            <h3>{stargazers_count}</h3>
-            <img
-              src={starSvg}
-              alt="star"
-              style={{ width: "20px", height: "20px" }}
-            />
-            <h3 className="m-0">stars</h3>
-          </div>
-        </Container>
-      )}
-    </>
+    <Container className="d-flex gap-3 p-0">
+      <h3>
+        <a href={owner.html_url} target="_blank">
+          {ucString(owner.login)}
+        </a>
+        {" > "}
+        <a href={html_url} target="_blank">
+          {ucString(name)}
+        </a>
+      </h3>
+      <div className="d-flex justify-content-center align-items-center gap-2">
+        <h3>{stargazers_count}</h3>
+        <img
+          src={starSvg}
+          alt="star"
+          style={{ width: "20px", height: "20px" }}
+        />
+        <h3 className="m-0">stars</h3>
+      </div>
+    </Container>
   );
 };

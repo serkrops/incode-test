@@ -1,51 +1,50 @@
-import { Card, Container } from "react-bootstrap";
-import { IssueCard } from "./IssueCard";
-import React from "react";
+import { Container } from "react-bootstrap";
 import { Issue } from "../utils/types";
+import { IssueCard } from "./IssueCard";
 
-type Props = {
+interface IssueColumnProps {
+  title: string;
   issues: Issue[];
-  targetState: string;
+  targetStatus: string;
+  onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
+  onDrop: (
+    event: React.DragEvent<HTMLDivElement>,
+    targetStatus: string
+  ) => void;
   handleDragStart: (
     event: React.DragEvent<HTMLDivElement>,
     issue: Issue
   ) => void;
-  handleDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
-  handleDrop: (
-    event: React.DragEvent<HTMLDivElement>,
-    targetState: string
-  ) => void;
-};
+}
 
-export const IssueColumn: React.FC<Props> = ({
+export const IssueColumn: React.FC<IssueColumnProps> = ({
+  title,
   issues,
-  targetState,
+  targetStatus,
+  onDragOver,
+  onDrop,
   handleDragStart,
-  handleDragOver,
-  handleDrop,
 }) => {
   return (
-    <Container
-      className="d-flex flex-column gap-3 p-3 border"
-      style={{ overflowY: "auto", height: "78vh" }}
-      onDragOver={handleDragOver}
-      onDrop={(event: React.DragEvent<HTMLDivElement>) =>
-        handleDrop(event, targetState)
-      }
-    >
-      {issues.map((issue, index) => (
-        <Card
-          key={issue.number}
-          className="border"
-          draggable
-          onDragStart={(event: React.DragEvent<HTMLDivElement>) =>
-            handleDragStart(event, issue)
-          }
-          style={{ cursor: "grab" }}
-        >
-          <IssueCard issue={issue} index={index + 1} />
-        </Card>
-      ))}
-    </Container>
+    <div className="column">
+      <h3>{title}</h3>
+      <Container
+        className="d-flex flex-column gap-3 p-3 border"
+        style={{ overflowY: "auto", height: "78vh" }}
+        onDragOver={onDragOver}
+        onDrop={(event: React.DragEvent<HTMLDivElement>) =>
+          onDrop(event, targetStatus)
+        }
+      >
+        {issues.map((issue: Issue, index: number) => (
+          <IssueCard
+            key={issue.number}
+            issue={issue}
+            index={index}
+            onDragStart={handleDragStart}
+          />
+        ))}
+      </Container>
+    </div>
   );
 };
