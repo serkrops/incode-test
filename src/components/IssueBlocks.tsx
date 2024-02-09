@@ -1,22 +1,13 @@
 import { Container } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Issue, RootState } from "../utils/types";
-import { useEffect, useState } from "react";
 import { updateIssues } from "../store/dataSlice";
 import { IssueColumn } from "./IssueColumn";
 
 export const IssueBlocks = () => {
   const dispatch = useDispatch();
-  const { issues } = useSelector((state: RootState) => state.data);
-  const [openedIssues, setOpenedIssues] = useState<Issue[]>([]);
-  const [closedIssues, setClosedIssues] = useState<Issue[]>([]);
-  const [inProgressIssues, setInProgressIssues] = useState<Issue[]>([]);
-
-  useEffect(() => {
-    setOpenedIssues(issues.filter((issue) => issue.state === "open"));
-    setClosedIssues(issues.filter((issue) => issue.state === "closed"));
-    setInProgressIssues(issues.filter((issue) => issue.state === "inProgress"));
-  }, [issues]);
+  const { issues, url } = useSelector((state: RootState) => state.data);
+  const { open, close, progress } = issues;
 
   const handleDragStart = (
     event: React.DragEvent<HTMLDivElement>,
@@ -31,72 +22,58 @@ export const IssueBlocks = () => {
 
   const handleDrop = (
     event: React.DragEvent<HTMLDivElement>,
-    targetState: string
+    targetStatus: string
   ) => {
     event.preventDefault();
     const issue = JSON.parse(event.dataTransfer.getData("text/plain"));
+    const updatedIssues = {
+      open: open.filter((item: Issue) => item.number !== issue.number),
+      close: close.filter((item: Issue) => item.number !== issue.number),
+      progress: progress.filter((item: Issue) => item.number !== issue.number),
+    };
 
-    if (targetState === "open") {
-      setOpenedIssues((prevIssues) => [...prevIssues, issue]);
-    } else if (targetState === "inProgress") {
-      setInProgressIssues((prevIssues) => [...prevIssues, issue]);
-    } else if (targetState === "closed") {
-      setClosedIssues((prevIssues) => [...prevIssues, issue]);
+    if (targetStatus === "open") {
+      updatedIssues.open.push(issue);
+    } else if (targetStatus === "close") {
+      updatedIssues.close.push(issue);
+    } else if (targetStatus === "progress") {
+      updatedIssues.progress.push(issue);
     }
 
-    const updatedIssues = issues.map((item) => {
-      if (item.number === issue.number) {
-        return { ...item, state: targetState };
-      }
-      return item;
-    });
-
     dispatch(updateIssues(updatedIssues));
+    sessionStorage.setItem(url, JSON.stringify(updatedIssues));
   };
+
+  // console.log(JSON.stringify(open[0]));
 
   return (
     <>
-      {issues.length > 0 && (
+      {url.length > 0 && (
         <Container className="d-flex gap-3 p-0">
-          <div
-            className="d-flex flex-column gap-3 text-center"
-            style={{ width: "33%", height: "78vh" }}
-          >
-            <h3>ToDo</h3>
-            <IssueColumn
-              issues={openedIssues}
-              targetState="open"
-              handleDragStart={handleDragStart}
-              handleDragOver={handleDragOver}
-              handleDrop={handleDrop}
-            />
-          </div>
-          <div
-            className="d-flex flex-column gap-3 text-center"
-            style={{ width: "33%", height: "78vh" }}
-          >
-            <h3>In Progress</h3>
-            <IssueColumn
-              issues={inProgressIssues}
-              targetState="inProgress"
-              handleDragStart={handleDragStart}
-              handleDragOver={handleDragOver}
-              handleDrop={handleDrop}
-            />
-          </div>
-          <div
-            className="d-flex flex-column gap-3 text-center"
-            style={{ width: "33%", height: "78vh" }}
-          >
-            <h3>Done</h3>
-            <IssueColumn
-              issues={closedIssues}
-              targetState="closed"
-              handleDragStart={handleDragStart}
-              handleDragOver={handleDragOver}
-              handleDrop={handleDrop}
-            />
-          </div>
+          <IssueColumn
+            title="ToDo"
+            issues={open}
+            targetStatus="open"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            handleDragStart={handleDragStart}
+          />
+          <IssueColumn
+            title="In Progress"
+            issues={progress}
+            targetStatus="progress"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            handleDragStart={handleDragStart}
+          />
+          <IssueColumn
+            title="Done"
+            issues={close}
+            targetStatus="close"
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+            handleDragStart={handleDragStart}
+          />
         </Container>
       )}
     </>

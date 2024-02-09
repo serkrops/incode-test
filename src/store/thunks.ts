@@ -1,32 +1,18 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { fetchApiData } from "../utils/helpers";
 
 export const fetchRepo = createAsyncThunk(
   "data/fetchRepo",
   async ({ owner, repo }: { owner: string; repo: string }) => {
-    try {
-      const response = await axios.get(
-        `https://api.github.com/repos/${owner}/${repo}`
-      );
-
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
+    const url = `https://api.github.com/repos/${owner}/${repo}`;
+    return fetchApiData(url);
   }
 );
 
 export const fetchIssues = createAsyncThunk(
   "data/fetchIssues",
   async ({ owner, repo }: { owner: string; repo: string }) => {
-    try {
-      const response = await axios.get(
-        `https://api.github.com/repos/${owner}/${repo}/issues?state=all&per_page=10`
-      );
-
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
+    const url = `https://api.github.com/repos/${owner}/${repo}/issues?state=all&per_page=20`;
+    return fetchApiData(url);
   }
 );
