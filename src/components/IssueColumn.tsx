@@ -1,4 +1,4 @@
-import { Container } from "react-bootstrap";
+import { Col, Container } from "react-bootstrap";
 import { Issue } from "../utils/types";
 import { IssueCard } from "./IssueCard";
 
@@ -26,7 +26,7 @@ export const IssueColumn: React.FC<IssueColumnProps> = ({
   handleDragStart,
 }) => {
   return (
-    <div className="column">
+    <Col className="column">
       <h3>{title}</h3>
       <Container
         className="d-flex flex-column gap-3 p-3 border"
@@ -45,6 +45,6 @@ export const IssueColumn: React.FC<IssueColumnProps> = ({
           />
         ))}
       </Container>
-    </div>
+    </Col>
   );
 };

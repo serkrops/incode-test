@@ -1,4 +1,4 @@
-import { Container } from "react-bootstrap";
+import { Row } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Issue, RootState } from "../utils/types";
 import { updateIssues } from "../store/dataSlice";
@@ -44,12 +44,10 @@ export const IssueBlocks = () => {
     sessionStorage.setItem(url, JSON.stringify(updatedIssues));
   };
 
-  // console.log(JSON.stringify(open[0]));
-
   return (
     <>
       {url.length > 0 && (
-        <Container className="d-flex gap-3 p-0">
+        <Row className="d-flex gap-3 p-0">
           <IssueColumn
             title="ToDo"
             issues={open}
@@ -74,7 +72,7 @@ export const IssueBlocks = () => {
             onDrop={handleDrop}
             handleDragStart={handleDragStart}
           />
-        </Container>
+        </Row>
       )}
     </>
   );

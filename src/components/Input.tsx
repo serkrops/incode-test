@@ -40,7 +40,7 @@ export const Input = () => {
           onChange={handleChange}
         />
         <Button variant="outline-primary" type="submit">
-          Button
+          Find Issues
         </Button>
       </InputGroup>
     </Form>
